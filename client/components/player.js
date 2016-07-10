@@ -10,7 +10,8 @@ module.exports = Vue.extend({
 	data : function(){
 		return {
 			now : 0, //当前播放时间,单位秒
-			duration : 0 //全时长,单位秒
+			duration : 0, //全时长,单位秒
+			status : 'none' //当前状态,play=播放、pause=暂停
 		};
 	},
 
@@ -41,7 +42,6 @@ module.exports = Vue.extend({
 				audio.src = this.song['src'];
 				audio.load();
 			}else{
-				console.log(this.song);
 				var url = '/songsrc?key=' + this.song['from'] + '&id=' + this.song['id'],
 					promise = that.$http.get(url);
 				promise.then(function(res){
@@ -52,15 +52,7 @@ module.exports = Vue.extend({
 		});
 		//数据加载完
 		audio.addEventListener('loadeddata',function(){
-			audio.play();
-			that.$data.duration = audio.duration;
-			var timer = setInterval(function(){
-				that.$data.now = audio.currentTime;
-				if(audio.duration <= audio.currentTime){
-					clearInterval(timer);
-					that.playSong(1);//播放下一首
-				}
-			},1000);
+			that.play();
 		});
 		//加载失败,加载下一首歌
 		audio.addEventListener('error',function(){
@@ -70,6 +62,32 @@ module.exports = Vue.extend({
 	},
 
 	methods : {
+		//播放
+		play : function(){
+			var that = this,
+				audio = this.$data.audio;
+			that.status = 'play';
+			audio.play();
+			that.$data.duration = audio.duration;
+			that.$data.timer = setInterval(function(){
+				that.$data.now = audio.currentTime;
+				if(audio.duration <= audio.currentTime){
+					clearInterval(that.$data.timer);
+					that.playSong(1);//播放下一首
+				}
+			},1000);
+		},
+		//暂停
+		pause : function(){
+			var that = this,
+				audio = this.$data.audio;
+			that.status = 'pause';
+			audio.pause();
+			if(that.$data.timer){
+				clearInterval(that.$data.timer);
+				that.$data.timer = null;
+			}
+		},
 		//根据偏移播放音乐
 		playSong : function(position){
 			//TODO 先记录,没有必要每次去计算

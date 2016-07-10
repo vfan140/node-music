@@ -416,7 +416,6 @@ exports.getFavSongs = function(u,cb){
         cb(qqMusic['favSongs']);
     }else{
         var getAlbumcb = function(err,result){
-            console.log(result);
             var songList = result.SongList,
                 songs = [];
             for (var i = songList.length - 1; i >= 0; i--) {
@@ -464,7 +463,6 @@ exports.getAlbum = function(u,id,cb){
     if(!qqMusic.inited){
         cb([]);
     }else{
-        console.log(cookieStorage.fetchCookie({ owner:qqMusic.u }));
         qqMusic.getAlbum(id,function(err,result){
             var info = {
                 name : result.Title,

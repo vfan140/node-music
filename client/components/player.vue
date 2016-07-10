@@ -16,7 +16,9 @@
 	</div>
 	<div class='music-player-controller'>
 		<i class="fa fa-2x fa-backward" aria-hidden="true" @click='playSong(-1)'></i>
-		<i class="fa fa-2x fa-pause" aria-hidden="true"></i>
+		<i v-if="status == 'play'" class="fa fa-2x fa-pause" aria-hidden="true" @click='pause()'></i>
+		<i v-if="status == 'pause' || status == 'none'" 
+			class="fa fa-2x fa-play" aria-hidden="true" @click='play()'></i>
 		<i class="fa fa-2x fa-forward" aria-hidden="true" @click='playSong(1)'></i>
 	</div>
 	<div class='music-player-volume'></div>
