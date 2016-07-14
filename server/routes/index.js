@@ -34,11 +34,22 @@ var init = function(req,res){
 		p = req.body.p,
 		key = req.body.key;
 	service.init(key,u,p,function(err,result){
-		var initModules = req.session.initModules = req.session.initModules || {};
-		initModules[key]={
-			u : u
-		};
-		res.end(key);
+		if(err){
+			var status = 'error';
+		}else{
+			var status = 'success';
+				initModules = req.session.initModules = req.session.initModules || {};
+			initModules[key]={
+				u : u
+			};
+		}
+		res.writeHead(200,{
+			'Content-Type' : 'application/json;charset=utf-8'
+		});
+		res.end(JSON.stringify({
+			status : status,
+			key : key
+		}),'utf-8');
 	});	
 };
 

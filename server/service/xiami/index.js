@@ -2,6 +2,7 @@ const url = require('url');
 const vm = require('vm');
 const async = require('async');
 const request = require('request');
+const _ = require('lodash');
 const Decode = require('./decode.js');
 const cookieStorage = require('../../utils/cookie-storage.js');
 
@@ -17,14 +18,36 @@ var xiaMiMuicCache = {};
 function XiaMiMusic(u,p){
     this.u = u;
     this.p = p;
+    //定时器,1小时后重新构建XiaMiMusic对象更新
+    this.timer = setInterval((function(that){
+        return function(){
+            var u = that.u,
+                p = that.p,
+                newXiamiMusic = new XiaMiMusic(u,p);
+            newXiamiMusic.init(function(){});
+            clearInterval(that.timer);
+            delete that;
+            xiaMiMuicCache[u] = newXiamiMusic;
+            console.log(u+' has reload!');
+        };
+    })(this),1000 * 60 * 60);
 };
 
 var proto = XiaMiMusic.prototype;
+proto.init = init;
 proto.getXiamiTokenSync = getXiamiTokenSync;
 proto.getMemberAuthSync = getMemberAuthSync;
 proto.getAlbums = getAlbums;
 proto.getAlbum = getAlbum;
 proto.getFavSong = getFavSong;
+
+function init(cb){
+    async.series({
+        getXiamiTokenSync : _.bind(this.getXiamiTokenSync,this),
+        getMemberAuthSync : _.bind(this.getMemberAuthSync,this)
+    },cb);
+    this.inited = true;
+}
 
 /**
  * 获取虾米音乐临时Token
@@ -45,6 +68,7 @@ function getXiamiTokenSync(cb){
             'Upgrade-Insecure-Requests' : '1'
         }
     },function(err,res){
+        if(err) cb(err);
         var rawCookies = res.headers['set-cookie'];
         cookieStorage.parseRawCookie(rawCookies,{
             save : true,
@@ -74,8 +98,10 @@ function getMemberAuthSync(cb){
             path : host 
         });
     if(!_cookies['_xiamitoken']){
-        throw new Error('miss cookie _xiamitoken,run Method `getXiamiTokenSync` to get it!');
-    }    
+        var e = new Error('miss cookie _xiamitoken,run Method `getXiamiTokenSync` to get it!');
+        cb(e);
+        return;
+    }
 	request.post({
 		url : loginUrl,
 		headers:{
@@ -91,12 +117,24 @@ function getMemberAuthSync(cb){
 			submit : '登 录'
 		}
 	},function(err,res){
-        var rawCookies = res.headers['set-cookie'];
-        cookieStorage.parseRawCookie(rawCookies,{
-            save : true,
-            owner : that.u
-        });//存储cookie
-        cb(null); 
+        if(err)
+            cb(err);
+        var context = new vm.createContext({
+            'jQuery7_11' : function(json){
+                var e = null;
+                if(json.status){
+                   var rawCookies = res.headers['set-cookie'];
+                   cookieStorage.parseRawCookie(rawCookies,{
+                       save : true,
+                       owner : that.u
+                   });//存储cookie
+                }else{
+                    e = new Error('login fail');
+                }
+                cb(e); 
+            }
+        }),script = new vm.Script(res.body);
+        script.runInContext(context); 
 	});
 }
 
@@ -223,15 +261,7 @@ exports.init = function(u,p,cb){
     if(xiaMiMuic.inited){
         cb();
     }else{
-        async.series({
-            getXiamiTokenSync : function(_cb){
-                xiaMiMuic.getXiamiTokenSync(_cb); 
-            },
-            getMemberAuthSync : function(_cb){
-                xiaMiMuic.getMemberAuthSync(_cb); 
-            }
-        },cb);
-        xiaMiMuic.inited = true;
+        xiaMiMuic.init(cb);
     }
 };
 

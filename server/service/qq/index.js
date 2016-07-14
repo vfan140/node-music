@@ -2,6 +2,7 @@ const url = require('url');
 const vm = require('vm');
 const request = require('request');
 const async = require('async');
+const _ = require('lodash');
 const str = require('./str.js');
 const Encryption =  require('./encryption.js');
 const cookieStorage = require('../../utils/cookie-storage.js');
@@ -20,15 +21,38 @@ var qqMuicCache = {};
 function QQMusic(u,p){
     this.u = u;
     this.p = p;
+    //定时器,1小时后重新构建QQMusic对象更新
+    this.timer = setInterval((function(that){
+        return function(){
+            var u = that.u,
+                p = that.p,
+                newQQMusic = new QQMusic(u,p);
+            newQQMusic.init(function(){});
+            clearInterval(that.timer);
+            delete that;
+            qqMuicCache[u] = newQQMusic;
+            console.log(u+' has reload!');
+        };
+    })(this),1000 * 60 * 60);
 };
 
 var proto = QQMusic.prototype;
+proto.init = init;
 proto.getLoginSign = getLoginSign;
 proto.checkLoginSign = checkLoginSign;
 proto.getSkey = getSkey;
 proto.getPskey = getPskey;
 proto.getAlbums = getAlbums;
 proto.getAlbum = getAlbum;
+
+function init(cb){
+    async.series({
+        getLoginSign : _.bind(this.getLoginSign,this),
+        checkLoginSign :  _.bind(this.checkLoginSign,this),
+        getSkey : _.bind(this.getSkey,this)
+    },cb);
+    this.inited = true;
+}
 
 /**
  * 获取g_token，根据skey值换取
@@ -65,6 +89,7 @@ function getLoginSign(cb){
             'User-Agent' : ua
         }
     },function(err,res){
+        if(err) cb(err);
         var rawCookies = res.headers['set-cookie'];
         cookieStorage.parseRawCookie(rawCookies,{
             save : true,
@@ -86,7 +111,9 @@ function checkLoginSign(cb){
             path : host 
         });
     if(!_cookies['pt_login_sig']){
-        throw new Error('miss cookie sign,run Method `getLoginSign` to get it!');
+        var e =  new Error('miss cookie sign,run Method `getLoginSign` to get it!');
+        cb(e);
+        return;
     }
     var sign = _cookies['pt_login_sig'].value;
         checkURL = url.format({
@@ -110,6 +137,8 @@ function checkLoginSign(cb){
             'User-Agent' : ua
         }
     },function(err,res){
+        if(err) 
+            cb(err);
         var body = res.body,
             context = new vm.createContext({
                 ptui_checkVC : function(t,verifycode,s,verifysession){
@@ -145,10 +174,14 @@ function getSkey(cb){
             path : host 
         });
     if(!_cookies['verifycode']){
-        throw new Error('miss verifycode,run callback Method `ptui_checkVC` can get it(ptui_checkVC will run after `checkLoginSign` run. )')
+        var e = new Error('miss verifycode,run callback Method `ptui_checkVC` can get it(ptui_checkVC will run after `checkLoginSign` run. )');
+        cb(e);
+        return;
     }   
     if(!_cookies['verifysession']){
-        throw new Error('miss verifysession,run callback Method `ptui_checkVC` can get it(ptui_checkVC will run after `checkLoginSign` run. )')
+        var e = new Error('miss verifysession,run callback Method `ptui_checkVC` can get it(ptui_checkVC will run after `checkLoginSign` run. )');
+        cb(e);
+        return;
     }  
     var salt = str.uin2hex(that.u),
         _p = Encryption.getEncryption(that.p,salt,_cookies['verifycode'].value);
@@ -177,6 +210,8 @@ function getSkey(cb){
                 'User-Agent' : ua
             }
         },function(err,res){
+            if(err)
+                cb(err);
             var rawCookies = res.headers['set-cookie'];
             cookieStorage.parseRawCookie(rawCookies,{
                 save : true,
@@ -185,7 +220,7 @@ function getSkey(cb){
             var context = new vm.createContext({
                 'ptuiCB' : function(a,b,url){
                     that.getPskey(url,function(err,result){
-                        cb(null);
+                        cb(err);
                     });
                 }
             }),script = new vm.Script(res.body);
@@ -207,7 +242,8 @@ function getPskey(fetchURL,cb){
             'User-Agent' : ua,
         }
     };
-    request(options,function(error,res){
+    request(options,function(err,res){
+        if(err) cb(err);
         var rawCookies = res.headers['set-cookie'];
         cookieStorage.parseRawCookie(rawCookies,{
             save : true,
@@ -340,18 +376,7 @@ exports.init = function(u,p,cb){
     if(qqMusic.inited){
         cb();
     }else{
-        async.series({
-            getLoginSign : function(_cb){
-                qqMusic.getLoginSign(_cb); 
-            },
-            checkLoginSign : function(_cb){
-                qqMusic.checkLoginSign(_cb); 
-            },
-            getSkey : function(_cb){
-                qqMusic.getSkey(_cb);
-            }
-        },cb);
-        qqMusic.inited = true;
+        qqMusic.init(cb);
     }
 };
 

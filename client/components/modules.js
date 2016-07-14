@@ -34,13 +34,20 @@ module.exports = Vue.extend({
 					u : this.u,
 					p : this.p
 				});
-			that.$data.showModal = false;	
+			
 			promise.then(function(res){
-				that.$dispatch('module-changed',{
-					key : res.data,
-					inited : true
-				});
-				that.reset();
+				var status = res.data.status,
+					key = res.data.key;
+				if(status == 'success'){
+					that.$dispatch('module-changed',{
+						key : key,
+						inited : true
+					});
+					that.$data.showModal = false;	
+					that.reset();
+				}else{
+					alert('账号或密码错误!');
+				}
 			});
 		},
 		doLogout : function(){
