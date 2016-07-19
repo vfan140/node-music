@@ -44,10 +44,13 @@ app.use(express.static(__dirname));
 app.get('/', index.index);
 app.get('/modules',index.modules);
 app.post('/init',index.init);
+app.post('/destory',index.destory);
+
 app.get('/albums',album.getAlbums);
 app.get('/album',album.getAlbum);
 app.get('/favsongs',album.getFavSongs);
 app.get('/songsrc',album.getSongSrc);
+
 
 process.on('uncaughtException', function (err) {
   console.error(err);

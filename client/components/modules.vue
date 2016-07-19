@@ -2,7 +2,7 @@
 	<li class= 'music-module' v-for="vModule in modules">
 		<template v-if='vModule.inited == true'>
 			<i class = 'fa fa-lg fa-circle'></i>
-			<span class='music-module-name loaded'>${vModule.name}</span>
+			<span class='music-module-name loaded' @click='openLogoutModal(vModule.key)'>${vModule.name}</span>
 		</template>
 		<template v-if='vModule.inited == false'>
 			<i class = 'fa fa-lg fa-circle-o'></i>
@@ -30,4 +30,16 @@
     	<button type="button" class="btn btn-default" @click='showModal = false'>取消</button>
     	<button type="button" class="btn btn-success" @click='doLogin();'>确定</button>
   	</div>
+</modal>
+<modal :show.sync="showLogoutModal" title="test" effect="fade" width="800" class="music-login-modal">
+    <div slot="modal-header" class="modal-header">
+      <h4 class="modal-title">退出提示</h4>
+    </div>
+    <div slot="modal-body" class="modal-body">
+      确定退出？
+    </div>
+    <div slot="modal-footer" class="modal-footer">
+      <button type="button" class="btn btn-default" @click='showLogoutModal = false'>取消</button>
+      <button type="button" class="btn btn-success" @click='doLogout();'>确定</button>
+    </div>
 </modal>

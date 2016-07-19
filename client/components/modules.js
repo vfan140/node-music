@@ -16,6 +16,7 @@ module.exports = Vue.extend({
 	data : function(){
 		return {
 			showModal : false,
+			showLogoutModal : false,
 			key : '',//音乐app key值
 			u : '',//缓存账号
 			p : ''//缓存密码
@@ -27,6 +28,10 @@ module.exports = Vue.extend({
 			this.$data.key = key;
 			this.showModal = true;
 		},
+		openLogoutModal : function(key){
+			this.$data.key = key;
+			this.showLogoutModal = true;
+		},
 		doLogin : function(){
 			var that = this,
 				promise = this.$http.post('/init',{
@@ -34,16 +39,15 @@ module.exports = Vue.extend({
 					u : this.u,
 					p : this.p
 				});
-			
 			promise.then(function(res){
 				var status = res.data.status,
 					key = res.data.key;
+				that.$data.showModal = false;	
 				if(status == 'success'){
 					that.$dispatch('module-changed',{
 						key : key,
 						inited : true
 					});
-					that.$data.showModal = false;	
 					that.reset();
 				}else{
 					alert('账号或密码错误!');
@@ -51,7 +55,22 @@ module.exports = Vue.extend({
 			});
 		},
 		doLogout : function(){
-
+			var that = this,
+				promise = this.$http.post('/destory',{
+					key :this.$data.key
+				});
+			that.$data.showLogoutModal = false;
+			promise.then(function(res){
+				var status = res.data.status,
+					key = res.data.key;
+				if(status == 'success'){
+					that.$dispatch('module-changed',{
+						key : key,
+						inited : false
+					});
+					that.reset();
+				}	
+			});		
 		},
 		reset : function(){
 			this.$data.key = '';

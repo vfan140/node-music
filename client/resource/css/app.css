@@ -35,7 +35,7 @@ header{
 	display: inline-block;
 	margin-right: 10px;
 }
-.music-module-name.unload{
+.music-module-name{
 	cursor: pointer;
 }
 .music-login-modal .form-control{

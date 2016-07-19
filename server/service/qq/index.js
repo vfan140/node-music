@@ -381,6 +381,20 @@ exports.init = function(u,p,cb){
 };
 
 /**
+ * 销毁当前账号
+ * @param  {[type]}   u  [description]
+ * @param  {Function} cb [description]
+ */
+exports.destory = function(u,cb){
+    if(qqMuicCache[u]){
+        var qqMuic = qqMuicCache[u];
+        clearInterval(qqMuic.timer);
+        delete qqMuic;
+    }
+    cb();
+};
+
+/**
  * 获取歌单
  * @param  {[type]} u [description]
  * @param  {[type]} p [description]

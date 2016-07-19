@@ -266,6 +266,20 @@ exports.init = function(u,p,cb){
 };
 
 /**
+ * 销毁当前账号
+ * @param  {[type]}   u  [description]
+ * @param  {Function} cb [description]
+ */
+exports.destory = function(u,cb){
+    if(xiaMiMuicCache[u]){
+        var xiaMiMuic = xiaMiMuicCache[u];
+        clearInterval(xiaMiMuic.timer);
+        delete xiaMiMuic;
+    }
+    cb();
+};
+
+/**
  * 获取歌单
  * @param  {[type]} u [description]
  * @param  {[type]} p [description]

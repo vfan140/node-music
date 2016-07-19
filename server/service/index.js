@@ -18,6 +18,15 @@ exports.init = function(key,u,p,cb){
 	app.init(u,p,cb);
 };
 
+exports.destory = function(key,u,cb){
+	var app = require(path.join(rootPath,key));
+	if(app.destory){
+		app.destory(u,cb);
+	}else{
+		cb();
+	}
+};
+
 /**
  * 获取已开发的音乐APP模块
  */

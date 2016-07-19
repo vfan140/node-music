@@ -53,6 +53,28 @@ var init = function(req,res){
 	});	
 };
 
+var destory = function(req,res){
+	var key = req.body.key;
+		initModules = req.session.initModules || {};
+	if(initModules[key]){
+		initModules[key] = null;
+		service.destory(key,initModules[key],function(err,result){
+			if(err){
+				var status = 'error';
+			}else{
+				var status = 'success';
+			}
+			res.writeHead(200,{
+				'Content-Type' : 'application/json;charset=utf-8'
+			});
+			res.end(JSON.stringify({
+				status : status,
+				key : key
+			}),'utf-8');
+		});
+	}	
+};
+
 var modules = function(req,res){
 	var initModules = req.session.initModules || {};
 	service.getModules(initModules,function(__modules){
@@ -65,4 +87,5 @@ var modules = function(req,res){
 
 exports.index = index;
 exports.init = init;
+exports.destory = destory;
 exports.modules = modules;
