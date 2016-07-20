@@ -166,6 +166,9 @@ footer{
 	width: 100%;
 	height: 80px;
 }
+
+
+/** Player CSS */
 .music-player{
 	padding-left: 278px;
 	padding-right : 270px;
@@ -251,4 +254,54 @@ footer{
     top: 50%;
     margin-top: -4px;
     margin-left: -4px;
-}   
+} 
+
+
+/** Loading CSS */
+.mysic-loading-container{
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	padding: 25% 0;
+	background: rgba(0, 0, 0, .5);
+}
+.music-loading {
+    display: inline-block;
+    text-align: center;
+}
+.music-loading>div {
+    width: 16px;
+    height: 16px;
+    background-color: #FFF;
+    display: inline-block;
+    border-radius : 100%;
+    -webkit-animation: animate-Loading 1.4s infinite ease-in-out both;
+    animation: animate-Loading 1.4s infinite ease-in-out both
+}
+.music-loading>div+div {
+    margin-left: 5px
+}
+.music-loading .music-loading-round1 {
+    -webkit-animation-delay: -.32s;
+    animation-delay: -.32s;
+}
+.music-loading .music-loading-round2 {
+    -webkit-animation-delay: -.16s;
+    animation-delay: -.16s;
+}
+.music-loading .music-loading-round3 {
+    -webkit-animation-delay: 1.4s;
+    animation-delay: 1.4s;
+}
+@-webkit-keyframes animate-Loading{
+	 0%,80%,100% {
+        -webkit-transform: scale(0);
+        transform: scale(0)
+    }
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1)
+    }
+}

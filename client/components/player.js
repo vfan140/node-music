@@ -59,9 +59,22 @@ module.exports = Vue.extend({
 			if(that.songs && that.songs.length > 0)
 				that.playSong(1);
 		});
+		// document.body.addEventListener('keypress',function(e){
+		// 	//e.preventDefault(); 
+		// 	if(e.keyCode == 32){
+		// 		that.switch();
+		// 	}
+		// });
 	},
 
 	methods : {
+		switch : function(){
+			if(this.status == 'play'){
+				this.pause();
+			}else{
+				this.play();
+			}
+		},
 		//播放
 		play : function(){
 			var that = this,

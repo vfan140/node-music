@@ -7,7 +7,8 @@ var Vue = require('vue'),
 	ModulesComponent = require('./modules.js'),
 	AlbumsComponent = require('./albums.js'),
 	AlbumComponent = require('./album.js'),
-	PlayerComponent = require('./player.js');
+	PlayerComponent = require('./player.js'),
+	LoadingComponent = require('./loading.js');
 
 module.exports = Vue.extend({
 
@@ -24,7 +25,8 @@ module.exports = Vue.extend({
 		modulesComponent : ModulesComponent,
 		albumsComponent : AlbumsComponent,
 		albumComponent : AlbumComponent,
-		playerComponent : PlayerComponent
+		playerComponent : PlayerComponent,
+		loadingComponent : LoadingComponent
 	},
 
 	data : function(){
@@ -33,7 +35,8 @@ module.exports = Vue.extend({
 			albums : [], //歌单
 			activeAlbum : 'history', //当前选中的歌单,默认随机音乐
 			playSong : null,//当前正在播放的歌曲
-			playSongList : []//当前正在播放的歌曲列表
+			playSongList : [],//当前正在播放的歌曲列表
+			isLoading : false //页面是否处于加载中状态
 		};
 	},
 
@@ -55,6 +58,10 @@ module.exports = Vue.extend({
 	},
 
 	events : {
+		//加载中状态切换
+		'loading-changed' : function(isLoading){
+			this.isLoading = isLoading;
+		},
 		//模块信息发生变化(登陆、登出等)
 		'module-changed' : function(___module){
 			for(var i = 0;i < this.modules.length;i++){

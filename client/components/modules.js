@@ -39,10 +39,11 @@ module.exports = Vue.extend({
 					u : this.u,
 					p : this.p
 				});
+			that.$dispatch('loading-changed',true);	
+			that.$data.showModal = false;	
 			promise.then(function(res){
 				var status = res.data.status,
 					key = res.data.key;
-				that.$data.showModal = false;	
 				if(status == 'success'){
 					that.$dispatch('module-changed',{
 						key : key,
@@ -52,6 +53,7 @@ module.exports = Vue.extend({
 				}else{
 					alert('账号或密码错误!');
 				}
+				that.$dispatch('loading-changed',false);
 			});
 		},
 		doLogout : function(){

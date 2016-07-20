@@ -13,4 +13,7 @@
 	<footer>
 		<player-component :song='playSong' :songs='playSongList'></player-component>
 	</footer>
+
+	<loading-component :show='isLoading'></loading-component>
+	
 </div>

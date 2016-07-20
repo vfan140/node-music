@@ -42,15 +42,19 @@ module.exports = Vue.extend({
 		getAlbum : function(key,id){
 			var that = this;
 			var promise = that.$http.get('/album?key='+key + '&id=' + id);
+			that.$dispatch('loading-changed',true);	
 			promise.then(function(res){
 				that.albumobj = res.data;
+				that.$dispatch('loading-changed',false);	
 			});
 		},
 		getFavSongs : function(){
 			var that = this;
 			var promise = that.$http.get('/favsongs');
+			that.$dispatch('loading-changed',true);
 			promise.then(function(res){
 				that.albumobj = res.data;
+				that.$dispatch('loading-changed',false);
 			});
 		},
 		selectSong : function(song,songs){
