@@ -28,7 +28,6 @@ function XiaMiMusic(u,p){
             clearInterval(that.timer);
             delete that;
             xiaMiMuicCache[u] = newXiamiMusic;
-            console.log(u+' has reload!');
         };
     })(this),1000 * 60 * 60);
 };

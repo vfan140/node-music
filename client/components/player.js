@@ -59,12 +59,13 @@ module.exports = Vue.extend({
 			if(that.songs && that.songs.length > 0)
 				that.playSong(1);
 		});
-		// document.body.addEventListener('keypress',function(e){
-		// 	//e.preventDefault(); 
-		// 	if(e.keyCode == 32){
-		// 		that.switch();
-		// 	}
-		// });
+		document.body.addEventListener('keypress',function(e){
+			if(e.keyCode == 32){
+				e.preventDefault(); 
+				that.switch();
+			}
+			return true;
+		});
 	},
 
 	methods : {

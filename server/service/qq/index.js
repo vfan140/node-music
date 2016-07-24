@@ -31,7 +31,6 @@ function QQMusic(u,p){
             clearInterval(that.timer);
             delete that;
             qqMuicCache[u] = newQQMusic;
-            console.log(u+' has reload!');
         };
     })(this),1000 * 60 * 60);
 };
@@ -369,15 +368,14 @@ exports.appname = appname;
  * @return {[type]}      [description]
  */
 exports.init = function(u,p,cb){
-    if(!qqMuicCache[u]){
-        qqMuicCache[u] = new QQMusic(u,p);
+    if(qqMuicCache[u]){
+        var originMusic = qqMuicCache[u];
+        clearInterval(originMusic.timer);
+        delete originMusic;
     }
+    qqMuicCache[u] = new QQMusic(u,p);
     var qqMusic = qqMuicCache[u];
-    if(qqMusic.inited){
-        cb();
-    }else{
-        qqMusic.init(cb);
-    }
+    qqMusic.init(cb);
 };
 
 /**
@@ -496,12 +494,17 @@ exports.getFavSongs = function(u,cb){
  */
 exports.getAlbum = function(u,id,cb){
     if(!qqMuicCache[u]){
-        cb([]);
+        cb({});
     }
     var qqMusic = qqMuicCache[u];
     if(!qqMusic.inited){
-        cb([]);
+        cb({});
     }else{
+        qqMusic['songList'] = qqMusic['songList'] || {};
+        if(qqMusic['songList'][id]){
+            cb(qqMusic['songList'][id]);
+            return;            
+        }
         qqMusic.getAlbum(id,function(err,result){
             var info = {
                 name : result.Title,
@@ -526,7 +529,9 @@ exports.getAlbum = function(u,id,cb){
                 };
                 songs.push(song);
             }
-            cb({ info : info,songs : songs });    
+            var ret = { info : info,songs : songs };
+            qqMusic['songList'][id] = ret;
+            cb(ret);    
         });
     }
 };

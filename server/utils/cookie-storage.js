@@ -56,8 +56,13 @@ function parseRawCookie(rawCookies,options){
      				break;
      		}
      	}
+     	console.log('parse:'+ options.domain);
      	if(options && options.save)
-     		storeCookie(c,{ owner : options.owner || 'me' });
+     		storeCookie(c,{ 
+     			domain : options.domain,
+     			path : options.path,
+     			owner : options.owner || 'me' 
+     		});
 	}
 }
 
@@ -67,10 +72,13 @@ function parseRawCookie(rawCookies,options){
  * @param  {[Object]} options [选项,必须包含cookie所有者owner]
  */
 function storeCookie(cookie,options){
+	console.log('store:'+ options.domain);
 	if(!options.owner){
 		console.log('miss option owner,can not store');
 		return;
 	}
+	cookie['domain'] = cookie['domain'] || options.domain;
+	cookie['path'] = cookie['path'] || options.path;
 	var cookiePath = path.join(cookie['domain'],cookie['path'] || '');
 	if(!cookiePath){
 		console.log('miss cookiePath,can not store');

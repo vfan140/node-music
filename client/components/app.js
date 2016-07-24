@@ -60,7 +60,16 @@ module.exports = Vue.extend({
 	events : {
 		//加载中状态切换
 		'loading-changed' : function(isLoading){
-			this.isLoading = isLoading;
+			var that = this;
+			if(isLoading){
+				this.loadingTimer = setTimeout(function(){
+					that.isLoading = true;
+				},300);
+			}else{
+				clearTimeout(this.loadingTimer);
+				this.loadingTimer = null;
+				this.isLoading = false;
+			}
 		},
 		//模块信息发生变化(登陆、登出等)
 		'module-changed' : function(___module){

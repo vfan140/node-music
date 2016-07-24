@@ -37,7 +37,7 @@ exports.getModules = function(initModules,cb){
 			var f = files[i],
 				mpath = path.join(rootPath,f),
 				stat = fs.statSync(mpath);
-			if(!stat.isDirectory() || files[i] == 'wy'){
+			if(!stat.isDirectory()){
 				continue;
 			}
 			let module = require(mpath);

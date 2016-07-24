@@ -1,5 +1,4 @@
 <div class="jumbotron music-jumbotron">
-	<i class="fa fa-4x fa-play-circle-o" aria-hidden="true"></i>
 	<div class='music-album-info'>
 		<h2>${info.name}</h2>
 		<p>
