@@ -1,11 +1,6 @@
 const WY = require('./core.js');
 
-function enc(u,p){
-    var obj = {
-            username : u,
-            password : WY.decodePassword(p),
-            rememberLogin: true
-        };
+function enc(obj){
     var bua = asrsea(JSON.stringify(obj), iterate(["流泪", "强"]), iterate(WY.Ka.md), iterate(["爱心", "女孩", "惊恐", "大笑"])),
         ret = {
             params: bua.encText,

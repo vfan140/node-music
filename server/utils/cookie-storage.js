@@ -56,7 +56,6 @@ function parseRawCookie(rawCookies,options){
      				break;
      		}
      	}
-     	console.log('parse:'+ options.domain);
      	if(options && options.save)
      		storeCookie(c,{ 
      			domain : options.domain,
@@ -72,7 +71,6 @@ function parseRawCookie(rawCookies,options){
  * @param  {[Object]} options [选项,必须包含cookie所有者owner]
  */
 function storeCookie(cookie,options){
-	console.log('store:'+ options.domain);
 	if(!options.owner){
 		console.log('miss option owner,can not store');
 		return;
