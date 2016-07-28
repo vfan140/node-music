@@ -282,10 +282,10 @@ exports.getFavSongs = function(u,cb){
             cb(songs);
         };
         var getAlbumscb = function(err,result){
-            var albumsList = result.list;
+            var albumsList = result.playlist;
             for (var i = albumsList.length - 1; i >= 0; i--) {
-                if(albumsList[i].dirname.indexOf('喜欢的音乐') > -1){
-                    var id = albumsList[i].dirid;
+                if(albumsList[i].name.indexOf('喜欢的音乐') > -1){
+                    var id = albumsList[i].id;
                     wyMusic.getAlbum(id,getAlbumcb);
                     break;
                 }
