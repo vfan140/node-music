@@ -55,9 +55,15 @@ function getFavSongs(req,res){
  * @param  {[type]} res [description]
  */
 function getSongSrc(req,res){
-	var key = req.query.key,
-		id = req.query.id;
-	service.getSongSrc(key,id,function(result){
+	var initModules = req.session.initModules || {},
+		key = req.query.key,
+		id = req.query.id,
+		u = initModules[key].u;
+	service.getSongSrc({
+		id : id,
+		u : u,
+		key : key
+	},function(result){
 		res.writeHead(200,{
 			'Content-Type' : 'text/html;charset=utf-8'
 		});

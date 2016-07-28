@@ -146,10 +146,13 @@ exports.getFavSongs = function(initModules,cb){
  * @param  {[type]}   id  [description]
  * @param  {Function} cb  [description]
  */
-exports.getSongSrc = function(key,id,cb){
-	var app = require(path.join(rootPath,key));
+exports.getSongSrc = function(options,cb){
+	var app = require(path.join(rootPath,options.key));
 	if(app.getSongSrc){
-		app.getSongSrc(id,cb);
+		app.getSongSrc({
+			u : options.u,
+			id : options.id
+		},cb);
 	}else{
 		cb('');
 	}

@@ -18,6 +18,7 @@
 		:class = "{'active' : album == _album.id }"
 		@click='activeChange(_album.id)'>
 		<i class="fa fa-lg fa-music" aria-hidden="true"></i>
-		${_album.name}<span class='music-album-module'>${_album.from}</span>
+		<div class="music-album-module-text">${_album.name}</div>
+		<span class='music-album-module'>${_album.from}</span>
 	</li>
 </ul>

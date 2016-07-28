@@ -8,6 +8,7 @@ const WY = require('./core.js');
 
 //模拟UA
 const ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36';
+const appname = '网易云';
 
 var wyMusicCache = {};
 
@@ -173,7 +174,7 @@ function getAlbum(id,cb){
     });
 }
 
-exports.appname = '网易云';
+exports.appname = appname;
 
 /**
  * 初始化虾米音乐账号
@@ -339,5 +340,49 @@ exports.getAlbum = function(u,id,cb){
             cb(ret);    
         });
     }
+};
+
+/**
+ * 获取指定歌曲的链接
+ * @param  {[type]}   id [description]
+ * @param  {Function} cb [description]
+ */
+exports.getSongSrc = function (options,cb){
+    var that = this;
+    var host = 'music.163.com',
+        _cookies = cookieStorage.fetchCookie({
+            owner : options.u,
+            path : host
+        });
+    var params = enc({
+        'br' : 128000,
+        'csrf_token' : _cookies['__csrf'].value,
+        'ids' : '[' + options.id + ']'
+    });
+    var songURL = url.format({
+        protocol : 'http',
+        host : host,
+        pathname : 'weapi/song/enhance/player/url',
+        query : {
+            'csrf_token' : _cookies['__csrf'].value
+        }
+    });
+    request.post({
+            'url' : songURL,
+            'headers':{
+                'Host':host,
+                'User-Agent' : ua,
+                'Cookie' :cookieStorage.serializeCookies(_cookies),
+                'Origin' : 'http://music.163.com',
+                'Referer' : 'http://music.163.com/'
+            },
+            form : params
+        },function(error,res){
+            if(error){
+                cb(error);
+            }
+            var ret = JSON.parse(res.body);
+            cb(ret.data[0].url);
+    });
 };
 

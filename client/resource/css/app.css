@@ -84,6 +84,7 @@ header{
 .music-menu > li i,
 .music-albums > li i{
 	margin-right: 10px;
+	vertical-align: 0%;
 }
 .music-albums-item.active{
 	background-color: #F0F0F0;
@@ -103,6 +104,13 @@ header{
 	margin-left: 5px;
 	font-size: 12px;
 	color: #aaa;
+}
+.music-album-module-text{
+	display: inline-block;
+	width: 95px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 .music-content article{
 	width: auto;

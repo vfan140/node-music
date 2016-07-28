@@ -398,12 +398,12 @@ exports.getFavSongs = function(u,cb){
 
 /**
  * 获取指定歌曲的链接
- * @param  {[type]}   id [description]
+ * @param  {[Object]}   options [description]
  * @param  {Function} cb [description]
  */
-exports.getSongSrc = function (id,cb){
+exports.getSongSrc = function (options,cb){
     request({
-        url : 'http://www.xiami.com/song/gethqsong/sid/'+ id,
+        url : 'http://www.xiami.com/song/gethqsong/sid/'+ options.id,
         headers:{
             'Host':'xiami.com',
             'User-Agent' : ua,
