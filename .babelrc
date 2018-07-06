@@ -1,0 +1,9 @@
+{
+  "presets": [
+  	["env",{"modules":false}]
+  ],
+  "ignore": [
+    "dist/*.js",
+    "packages/**/*.js"
+  ]
+}
