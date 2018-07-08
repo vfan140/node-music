@@ -2,8 +2,11 @@ const path = require('path')
 const { dependencies } = require('../../package.json')
 
 const webpack = require('webpack')
-const { VueLoaderPlugin } = require('vue-loader')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader')
+
+const devMode = process.env.NODE_ENV !== 'production'
 
 function resolve (dir) {
   return path.join(__dirname, '../../', dir)
@@ -26,7 +29,10 @@ module.exports = {
 			loader: 'vue-loader'
 		},{
 			test : /\.css$/,
-			use : ['css-loader','style-loader']
+			use : [
+				devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+				'css-loader'
+			]
 		},{
 			test: /\.js$/,
 			loader: 'babel-loader',
@@ -59,6 +65,10 @@ module.exports = {
       	}]
 	},
 	plugins : [
+		new MiniCssExtractPlugin({
+	      	filename: "[name].css",
+	      	chunkFilename: "[id].css"
+	    }),
 		new HtmlWebpackPlugin({
 		  	filename: 'index.html',
 		  	template: resolve('src/platforms/electron/index.html'),

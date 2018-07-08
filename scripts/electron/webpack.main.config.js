@@ -26,7 +26,14 @@ module.exports = {
 	  new webpack.NoEmitOnErrorsPlugin()
 	],
 	resolve: {
-	  extensions: ['.js', '.json', '.node']
+		alias: {
+	  		'@core': resolve('src/core')
+		},
+	  	extensions: ['.js', '.json', '.node']
+	},
+	node: {
+	  __dirname: process.env.NODE_ENV !== 'production',
+	  __filename: process.env.NODE_ENV !== 'production'
 	},
 	target: 'electron-main'
 }

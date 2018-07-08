@@ -1,4 +1,9 @@
 node_modules
 npm-debug.log
+npm-debug.log.*
 .DS_Store
 .idea
+dist/electron/*
+dist/web/*
+build/*
+!.gitkeep
