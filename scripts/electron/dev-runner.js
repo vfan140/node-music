@@ -1,5 +1,6 @@
 'use strict'
 
+const path = require('path')
 const { spawn } = require('child_process')
 const chalk = require('chalk')
 const electron = require('electron')
@@ -10,8 +11,16 @@ const webpackHotMiddleware = require('webpack-hot-middleware')
 const mainConfig = require('./webpack.main.config')
 const rendererConfig = require('./webpack.renderer.config')
 
+function resolve (dir) {
+  return path.join(__dirname, '../../', dir)
+}
+
+//设置webpack模式
 mainConfig.mode = 'development'
 rendererConfig.mode = 'development'
+
+//设置devtools调试
+mainConfig.entry.main = [resolve('src/platforms/electron/main/index.dev.js')].concat(mainConfig.entry.main)
 
 let hotMiddleware
 let electronProcess = null
