@@ -1,5 +1,5 @@
 const path = require('path')
-const { dependencies } = require('../../package.json')
+//const { dependencies } = require('../../package.json')
 
 const webpack = require('webpack')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
@@ -20,8 +20,15 @@ module.exports = {
 	},
 	output : {
 		filename : '[name].js',
+		chunkFilename : '[name].js',
 		libraryTarget: 'commonjs2',
 		path: resolve('dist/electron')
+	},
+	optimization : {
+		splitChunks : {
+			chunks : 'initial', //表示显示块的范围，有三个可选值：initial(初始块)、async(按需加载块)、all(全部块)，默认为all
+			minSize : 14000, //引用模块大小最小为14k
+		}
 	},
 	module : {
 		rules : [{
@@ -32,6 +39,13 @@ module.exports = {
 			use : [
 				devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
 				'css-loader'
+			]
+		},{
+			test : /\.less$/,
+			use : [
+				devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+				'css-loader',
+				'less-loader'
 			]
 		},{
 			test: /\.js$/,
@@ -85,13 +99,14 @@ module.exports = {
 	resolve: {
 	  	alias: {
 	    	'@': resolve('src/platforms/electron/renderer'),
+	    	'@root' : resolve(''),
 	    	'vue$': 'vue/dist/vue.esm.js'
 	  	},
 	  	extensions: ['.js', '.vue', '.json', '.css', '.node']
 	},
-	externals: [
-	  ...Object.keys(dependencies || {})
-	],
+	// externals: [
+	//   ...Object.keys(dependencies || {})
+	// ],
 	//生成source-map的类型
 	devtool: 'source-map',
 	target: 'electron-renderer'
