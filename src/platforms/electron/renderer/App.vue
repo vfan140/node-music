@@ -34,7 +34,7 @@ html,body{
 	flex-direction : column;
 	height: 100%;
 	.header,.footer{
-		flex : 0 0 60px;
+		flex : 0 0 6rem;
 	}
 	.content{
 		flex : 1 0 auto;
@@ -56,7 +56,7 @@ html,body{
 .content{
 	display: flex;
 	.aside{
-		flex : 0 0 190px
+		flex : 0 0 19rem
 	}
 	.body{
 		flex : 1 1 auto;

@@ -31,6 +31,10 @@ let electronProcess = null
 function startRenderer(){
 	return new Promise((resolve,reject) => {
 		const compiler = webpack(rendererConfig)
+		compiler.hooks.done.tap('rendererLoging',(stats) => {
+			console.log('renderer done...')
+			console.log(stats.toString())
+		})
 		hotMiddleware = webpackHotMiddleware(compiler, { 
       		log: false, 
       		heartbeat: 2500 
@@ -59,6 +63,8 @@ function startMain(){
 		    console.log(err)
 		    return
 		  }
+		  console.log('main done...')
+		  console.log(stats.toString())
 		  resolve()
 		})
 	})
